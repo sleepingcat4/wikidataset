@@ -1,5 +1,7 @@
 Most relevent Wikipedia Dumps (English) is available here: https://dumps.wikimedia.org/enwiki/latest/
 
+Install this library ```pip install mwxml```
+
 Downloading Wiki files
 ======================
 Downloading the Wiki abstract: https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-abstract.xml.gz
