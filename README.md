@@ -1,21 +1,28 @@
-Most relevent Wikipedia Dumps (English) is available here: https://dumps.wikimedia.org/enwiki/latest/
+#### Downloading Wikipedia Dumps
+Wikipedia dumps can be found: https://dumps.wikimedia.org/enwiki/
 
-Install this library ```pip install mwxml```
+Changing en value is enough to download the relevant language’s dump. After going to the dump, check the latest wikipedia dumps and download the relevant file. 
 
-Downloading Wiki files
-======================
-Downloading the Wiki abstract: https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-abstract.xml.gz
+I have provided multiple different scripts to generate both the abstracts and articles. For simplification purposes, I won’t go over creating articles and adhering to abstracts creation. 
 
-Downloading all the article: https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2
+### Code approach
+I programmed them while keeping simplification in mind. ```abstract.py``` is a one-step file. When just feeding the xml path, it’ll automatically fetch all the abstracts from the dump and create a parquet file. 
 
-What's this repo for?
-===========================
-Downloading and parsing Wikipedia dumps are exceptionally hard. Because it's in XML format, too much big in size, and malformated. Wiki dumps are rich in information but equally obnoxiously malformed. There are infoboxes, painful brackets and etc. These are structured in a fashion, it results in difficulty to remove them and compile a good chunch dataset. this particular pain is surfaced while we deal with full text. 
+Structure looks like this
 
-I have read dozens of repositories online and everyone offers something in advantage. Unfortunately, most are outdated/rely on parsing information directly from the Wikipedia API. Not an efficient method while you are deadling with 100GB data. That's in thie repo, I wrote scripts that can compile a full text wikipedia dataset. 
+URL | Text 
 
-```print_content``` - function allows to display the JSON file. 
+—-----------------------------
+Text column is structured: Title (title of wikipedia page) + Abstract
 
-```splitting in articles``` - allows to split the dump into articles and creates one JSON file = one article 
+Embeddings Column: Entire Text Column cell for each row’s input is taken and embeddings are generated. 
 
-```extracting text``` - a function to remove info boxes and everything from reference and below from trhe earlier generated JSON file. 
+Running ```embed.py``` file will take the parquet file we previously created and generate the embeddings and add an embeddings column
+
+URL | Text | Embeddings
+
+—-----------------------------------------
+
+Reading the file: ```read_parquet.py``` 
+
+Reading our generated parquet file (I mean any). 
