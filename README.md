@@ -1,7 +1,7 @@
 #### Downloading Wikipedia Dumps
 Wikipedia dumps can be found: https://dumps.wikimedia.org/enwiki/
 
-Changing en value is enough to download the relevant language’s dump. After going to the dump, check the latest wikipedia dumps and download the relevant file. 
+Changing **en** value is enough to download the relevant language’s dump. After going to the dump, check the latest wikipedia dumps and download the relevant file. 
 
 I have provided multiple different scripts to generate both the abstracts and articles. For simplification purposes, I won’t go over creating articles and adhering to abstracts creation. 
 
