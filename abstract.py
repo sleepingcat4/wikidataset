@@ -24,67 +24,58 @@ def validate_output_file(output_file_path):
     if not output_file_path.endswith(".parquet"):
         raise ValueError("Output file must have a .parquet extension.")
 
-# Get user input for file paths
 file_path = input("Enter the path of the JSON file: ")
 output_file_path = input("Enter the path for the output Parquet file: ")
 
-# Convert to absolute paths and print them
 absolute_input_path = os.path.abspath(file_path)
 absolute_output_path = os.path.abspath(output_file_path)
 
 print(f"Input JSON file path: {absolute_input_path}")
 print(f"Output Parquet file path: {absolute_output_path}")
 
-# Validate the output file path extension
 validate_output_file(absolute_output_path)
 
 data = []
 extract_all = False
 processed_count = 0
 
-# Process the input file
 with open(absolute_input_path, 'r') as file:
     for i, line in enumerate(file):
         entry = json.loads(line.strip())
-        
-        if 'opening_text' not in entry:
-            print("Skipped empty entry")
-            continue
         
         wiki = entry.get('wiki', None)
         language = entry.get('language', None)
         title = entry.get('title', None)
         abstract = entry.get('opening_text', None)
         
-        formatted_title = format_title(title)
-        url = f"https://en.wikipedia.org/wiki/{formatted_title}" if formatted_title else None
-        
-        cleaned_abstract = clean_text(abstract)
-        
-        version_control_value = "20240819" + str(i)
-        version_control_bytes = version_control_value.encode('utf-8')
-        version_control_base64 = base64.b64encode(version_control_bytes).decode('utf-8')
-        
-        fingerprint_index = create_fingerprint(processed_count + 1)
-        
-        data.append({
-            'URL': url,
-            'Wiki': wiki,
-            'Language': language,
-            'Title': title,
-            'Abstract': cleaned_abstract,
-            'Version Control': version_control_base64,
-            'Fingerprint index': fingerprint_index
-        })
-        
-        processed_count += 1
-        
-        if not extract_all and processed_count >= 5:
-            break
-        
-        print(f"Entry processed at index {i}")
+        if all([wiki, language, title, abstract]):
+            formatted_title = format_title(title)
+            url = f"https://en.wikipedia.org/wiki/{formatted_title}" if formatted_title else None
+            
+            cleaned_abstract = clean_text(abstract)
+            
+            version_control_value = "20240819" + str(processed_count + 1)
+            version_control_bytes = version_control_value.encode('utf-8')
+            version_control_base64 = base64.b64encode(version_control_bytes).decode('utf-8')
+            
+            fingerprint_index = create_fingerprint(processed_count + 1)
+            
+            data.append({
+                'URL': url,
+                'Wiki': wiki,
+                'Language': language,
+                'Title': title,
+                'Abstract': cleaned_abstract,
+                'Version Control': version_control_base64,
+                'Fingerprint index': fingerprint_index
+            })
+            
+            processed_count += 1
+            print(f"Processed entry {processed_count}")
+            
+            if not extract_all and processed_count >= 5:
+                break
 
-# Save the processed data to a parquet file
 table = pa.Table.from_pydict({
     'URL': [d['URL'] for d in data],
     'Wiki': [d['Wiki'] for d in data],
